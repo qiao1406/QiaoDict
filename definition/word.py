@@ -40,7 +40,7 @@ class Word(object):
         A definition of word
     """
 
-    def __init__(self, name, meanings, example_sentence=[]):
+    def __init__(self, name, meanings, example_sentences=[]):
         """
 
         :param name: string, 单词名
@@ -50,7 +50,7 @@ class Word(object):
 
         self.name = name
         self.meanings = meanings
-        self.example_sentence = example_sentence
+        self.example_sentences = example_sentences
 
     def __str__(self):
         s = '[' + self.name + ']\n'
@@ -58,10 +58,10 @@ class Word(object):
         for m in self.meanings:
             s += str(m) + '\n'
 
-        if self.example_sentence:
+        if self.example_sentences:
             s += '\ne.g.\n'
 
-            for es in self.example_sentence:
+            for es in self.example_sentences:
                 s += str(es) + '\n'
             s = s[:-1]
 
@@ -74,7 +74,7 @@ class Word(object):
         :return null
         """
 
-        self.example_sentence.append(s)
+        self.example_sentences.append(s)
 
     def update_meanings(self, m):
         """
