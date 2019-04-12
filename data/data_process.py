@@ -101,3 +101,20 @@ def get_all_words():
         con.close()
         return wl
 
+
+def look_for_dict(name):
+    """
+    查找并返回单词
+    :param name: string, 要查找的单词名字
+    :return: string, 查找结果
+    """
+    con, cur = initial()
+    try:
+        cur.execute('select * from words where name = ?', (name,))
+        temp = cur.fetchall()[0]
+        ans = str(word.Word(temp[0], pickle.loads(temp[1]), pickle.loads(temp[2])))
+    except sqlite3.Error as e:
+        print(e)
+        ans = '未找到单词：' + name
+    finally:
+        return ans
