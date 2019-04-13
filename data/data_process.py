@@ -22,7 +22,7 @@ def is_table_exist():
     :rtype: bool
     """
 
-    coon, cur = initial()
+    con, cur = initial()
 
     try:
         cur.execute('select name from sqlite_master where type = \'table\' and name = \'words\'')
@@ -32,10 +32,9 @@ def is_table_exist():
         temp = cur.fetchall()
         ans = False if not temp else 'words' == temp[0][0]
         cur.close()
-        coon.commit()
-        coon.close()
-
-    return ans
+        con.commit()
+        con.close()
+        return ans
 
 
 def create_words_table():
@@ -61,11 +60,12 @@ def insert_word(w):
     """
     往表里面添加一个单词
     :param w: Word, 要添加的单词
+    :return bool, 插入成功返回 True 否则返回 False
     """
     if not is_table_exist():
-        print('asd')
         create_words_table()
 
+    success = False
     con, cur = initial()
     try:
         cur.execute('select count(*) from words where name = ?', (w.name,))
@@ -74,12 +74,14 @@ def insert_word(w):
         if cur.fetchall()[0][0] == 0:
             cur.execute('insert into words(name, mean, sentences) values (?,?,?)',
                         (w.name, pickle.dumps(w.meanings), pickle.dumps(w.example_sentences)))
+            success = True
     except sqlite3.Error as e:
         print(e)
     finally:
         cur.close()
         con.commit()
         con.close()
+        return success
 
 
 def get_all_words():
@@ -109,12 +111,37 @@ def look_for_dict(name):
     :return: string, 查找结果
     """
     con, cur = initial()
+    ans = ''
     try:
         cur.execute('select * from words where name = ?', (name,))
         temp = cur.fetchall()[0]
         ans = str(word.Word(temp[0], pickle.loads(temp[1]), pickle.loads(temp[2])))
     except sqlite3.Error as e:
         print(e)
-        ans = '未找到单词：' + name
     finally:
+        ans = '未找到单词：' + name + '\n=============================\n' if not ans else ans
+        cur.close()
+        con.commit()
+        con.close()
         return ans
+
+
+def clear_word_table():
+    """
+    清空单词表
+    """
+    con, cur = initial()
+    try:
+        cur.execute('delete from words')
+    except sqlite3.Error as e:
+        print(e)
+    finally:
+        cur.close()
+        con.commit()
+        con.close()
+
+
+# print(len(get_all_words()))
+# for w in get_all_words():
+#
+#     print(w)

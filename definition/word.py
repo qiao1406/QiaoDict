@@ -22,7 +22,7 @@ class Sentence(object):
         Example Sentence
     """
 
-    def __init__(self, s, cm=''):
+    def __init__(self, s='', cm=''):
         """
 
         :param s: string, 英文例句
@@ -63,9 +63,8 @@ class Word(object):
 
             for es in self.example_sentences:
                 s += str(es) + '\n'
-            s = s[:-1]
 
-        return s
+        return s + '=============================\n'
 
     def add_example_sentence(self, s):
         """
